@@ -2,15 +2,17 @@
 1. Import standard library OS to access the current directory
 2. Import xlsxwriter to easily write excel files
 """
-import os
+import os, csv
 import xlsxwriter
 
-# Generator object of all .CSV files (in case of several products at once)
+# Generator object of the .csv files
 INPUT_FILES = [file for file in os.listdir() if file.endswith('.csv')]
 
-# The number of columns as well as the seperator/delimiter
-COLUMNS = 5
-SEPERATOR = ','
+SETUP = {
+	'delimiter' : ',',
+	'quotechar' : '"',
+	'skipinitialspace' : True
+}
 
 # Re-write each .CSV file into an excel file
 for file in INPUT_FILES:
