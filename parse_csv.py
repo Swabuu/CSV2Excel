@@ -13,17 +13,20 @@ COLUMNS = 5
 SEPERATOR = ','
 
 # Re-write each .CSV file into an excel file
-for file in INPUT_FILES:		
+for file in INPUT_FILES:
+	# Create a workbook and add a worksheet.
+	workbook = xlsxwriter.Workbook(file.replace('.csv', '.xlsx'))
+	worksheet = workbook.add_worksheet('Full Price List')
+	
+	# Loop over every row/line in the .CSV and generate an index
 	with open(file, 'r') as file_object:
-		# Create the new excel workbook as well as a worksheet
-		workbook = xlsxwriter.Workbook(file.replace('.csv', '.xlsx'))
-		worksheet = workbook.add_worksheet('Full Price List')
-
-		# Loop over every row/line in the .CSV and generate an index
-		for index, line in enumerate(file_object):
-
-			# Split on comma
-			line = line.split(SEPERATOR)
-
-			for column in range(COLUMNS):
-				worksheet.write_string(index, column, line[column])
+		reader = csv.reader(file_object, SETUP)
+		
+		# Get the header names
+		header = next(reader)
+		# Write the header
+		[worksheet.write_string(0, index, line) for index, line in enumerate(header)]
+		
+		# Write the rest with offset of header
+		for index, line in enumerate(reader, 1):
+			[worksheet.write(index, column, line[column]) for column in range(len(header))]
